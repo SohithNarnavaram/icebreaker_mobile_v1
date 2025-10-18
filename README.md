@@ -1,6 +1,4 @@
-# ProxyMeet
-
-A modern social networking application for discovering and connecting with people nearby.
+# Welcome to your Lovable project
 
 ## Project info
 

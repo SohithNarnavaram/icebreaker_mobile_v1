@@ -164,55 +164,62 @@ const Availability = () => {
 
       {/* Create Availability Form - Mobile Optimized Modal */}
       {showCreateForm && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4 animate-in fade-in duration-200">
-          <div className="w-full sm:max-w-md bg-card rounded-t-3xl sm:rounded-3xl p-6 space-y-5 shadow-float animate-in slide-in-from-bottom sm:slide-in-from-bottom-0 duration-300">
-            <div className="flex items-center justify-between">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-background rounded-3xl w-full max-w-md max-h-[85vh] flex flex-col overflow-hidden">
+            {/* Modal Header - Fixed */}
+            <div className="flex items-center justify-between p-5 border-b border-border flex-shrink-0">
               <h3 className="text-xl font-bold">Create Availability</h3>
               <button
                 onClick={() => setShowCreateForm(false)}
-                className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center active:scale-90 animate-fast"
+                className="p-2 rounded-full hover:bg-secondary/50 transition-colors"
               >
                 ✕
               </button>
             </div>
             
-            <div className="space-y-4">
-              <div>
-                <label className="text-sm font-medium text-foreground block mb-2">Date & Time</label>
-                <input
-                  type="datetime-local"
-                  className="w-full px-4 py-3 border border-border rounded-2xl bg-background focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-                />
-              </div>
-              <div>
-                <label className="text-sm font-medium text-foreground block mb-2">Location</label>
-                <input
-                  type="text"
-                  placeholder="e.g., Starbucks, Brigade Road"
-                  className="w-full px-4 py-3 border border-border rounded-2xl bg-background focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
-                />
+            {/* Form Content */}
+            <div className="p-5 flex-1">
+              <div className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium text-foreground block mb-2">Date & Time</label>
+                  <input
+                    type="datetime-local"
+                    className="w-full px-4 py-3 border border-border rounded-2xl bg-background focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-foreground block mb-2">Location</label>
+                  <input
+                    type="text"
+                    placeholder="e.g., Starbucks, Brigade Road"
+                    className="w-full px-4 py-3 border border-border rounded-2xl bg-background focus:ring-2 focus:ring-primary focus:border-transparent outline-none"
+                  />
+                </div>
               </div>
             </div>
             
-            <div className="flex gap-3 pt-2">
-              <button
-                onClick={() => setShowCreateForm(false)}
-                className="flex-1 py-3 rounded-xl border-2 border-border bg-background text-foreground font-medium active:scale-95 animate-fast"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  setShowCreateForm(false);
-                  toast({
-                    title: "Availability created!",
-                    description: "Your time slot is now live",
-                  });
-                }}
-                className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-medium active:scale-95 animate-fast shadow-brand"
-              >
-                Create
-              </button>
+            {/* Action Buttons - Fixed */}
+            <div className="p-5 border-t border-border flex-shrink-0 bg-background">
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowCreateForm(false)}
+                  className="flex-1 py-3 rounded-xl border-2 border-border bg-background text-foreground font-medium active:scale-95 animate-fast"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={() => {
+                    setShowCreateForm(false);
+                    toast({
+                      title: "Availability created!",
+                      description: "Your time slot is now live",
+                    });
+                  }}
+                  className="flex-1 py-3 rounded-xl bg-primary text-primary-foreground font-medium active:scale-95 animate-fast shadow-brand"
+                >
+                  Create
+                </button>
+              </div>
             </div>
           </div>
         </div>
