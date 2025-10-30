@@ -211,13 +211,17 @@ const Discover = () => {
                 <div className="flex gap-2 mt-3">
                   <button 
                     onClick={() => handleLikeMeetup(meetup.id)}
-                    className="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl border border-border bg-background text-foreground font-medium text-sm active:scale-95 transition-all duration-200"
+                    className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-xl border font-medium text-sm active:scale-95 transition-all duration-200 ${
+                      likedMeetups.has(meetup.id)
+                        ? 'border-[#7856d4] bg-[#F3EEFF] text-[#7856d4]'
+                        : 'border-border bg-background text-foreground'
+                    }`}
                   >
                     <Heart 
-                      size={16} 
-                      className={`transition-colors duration-300 ease-in-out ${
-                        likedMeetups.has(meetup.id) ? 'text-[#7856d4] fill-[#7856d4]' : ''
-                      }`}
+                      size={16}
+                      color={likedMeetups.has(meetup.id) ? '#7856d4' : 'currentColor'}
+                      fill={likedMeetups.has(meetup.id) ? '#7856d4' : 'none'}
+                      className="transition-colors duration-300 ease-in-out"
                     />
                     <span>Interested</span>
                   </button>

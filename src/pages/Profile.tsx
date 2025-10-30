@@ -154,12 +154,14 @@ const Profile = () => {
     <div className="h-full flex flex-col bg-background overflow-hidden">
       {/* Profile Header with Cover */}
       <div className="relative bg-gradient-to-br from-primary/20 via-secondary/20 to-card pb-20 flex-shrink-0">
-        <div className="px-5 pt-6 pb-4">
+        <div className="px-5 pt-6 pb-4 z-10 relative">
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold">Profile</h1>
             <button 
+              type="button"
               onClick={() => navigate('/settings')}
-              className="px-4 py-2 bg-background/80 backdrop-blur-sm rounded-full border border-border/50 font-medium text-sm active:scale-95 animate-fast shadow-sm"
+              className="px-4 py-2 bg-background/80 backdrop-blur-sm rounded-full border border-border/50 font-medium text-sm active:scale-95 animate-fast shadow-sm pointer-events-auto cursor-pointer z-20 min-w-[96px] h-10 items-center justify-center hidden sm:flex"
+              style={{ touchAction: 'manipulation' }}
             >
               <Edit size={16} className="inline mr-2" />
               Edit
@@ -168,7 +170,7 @@ const Profile = () => {
         </div>
         
         {/* Profile Image - Overlapping */}
-        <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2">
+        <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 pointer-events-none">
           <div className="relative">
             <img
               src={userProfile.image}
@@ -191,9 +193,20 @@ const Profile = () => {
       {/* Profile Info - Fixed Height Scroll */}
       <div className="flex-1 overflow-y-auto px-5 pt-20 pb-6 space-y-6">
         <div className="text-center">
-          <h2 className="text-2xl font-bold mb-1">
-            {userProfile.name}
-          </h2>
+          <div className="flex items-center justify-center gap-3 mb-1 px-4">
+            <h2 className="text-2xl font-bold truncate max-w-[60%]">
+              {userProfile.name}
+            </h2>
+            <button 
+              type="button"
+              onClick={() => navigate('/settings')}
+              className="px-3 py-1.5 bg-secondary/20 rounded-full border border-border/50 font-medium text-sm active:scale-95 animate-fast shadow-sm pointer-events-auto cursor-pointer inline-flex items-center gap-2 sm:hidden"
+              style={{ touchAction: 'manipulation' }}
+            >
+              <Edit size={16} />
+              <span>Edit</span>
+            </button>
+          </div>
           <div className="flex items-center justify-center gap-2 text-muted-foreground mb-2">
             <span className="text-lg font-semibold text-primary">{userProfile.age} years old</span>
             <span className="text-muted-foreground">•</span>
@@ -350,8 +363,11 @@ const Profile = () => {
 
       {/* Activity Modal */}
       {showActivityModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-4">
-          <div className="bg-background rounded-t-3xl sm:rounded-3xl w-full max-w-md h-[85vh] flex flex-col overflow-hidden">
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[80] flex items-end sm:items-center justify-center p-0 sm:p-4">
+          <div
+            className="bg-background rounded-t-3xl sm:rounded-3xl w-full max-w-md max-h-[85vh] flex flex-col overflow-hidden shadow-lg"
+            style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom))', marginBottom: '0.25rem' }}
+          >
             {/* Modal Header - Fixed */}
             <div className="flex items-center justify-between p-5 border-b border-border flex-shrink-0">
               <h2 className="text-xl font-bold">Your Activity</h2>
