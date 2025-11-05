@@ -159,7 +159,7 @@ const DiscoverScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000000' },
-  header: { paddingHorizontal: 24, paddingTop: 46, paddingBottom: 24, borderBottomWidth: 1, borderBottomColor: '#2E2E2E' },
+  header: { paddingHorizontal: 24, paddingTop: 46, paddingBottom: 20, backgroundColor: '#000000' },
   headerRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 },
   title: { fontSize: 28, fontWeight: 'bold', color: '#E5E7EB' },
   subtitle: { fontSize: 14, color: '#9CA3AF' },

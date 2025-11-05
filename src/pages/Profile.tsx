@@ -153,59 +153,72 @@ const Profile = () => {
   return (
     <div className="h-full flex flex-col bg-background overflow-hidden">
       {/* Profile Header with Cover */}
-      <div className="relative bg-gradient-to-br from-primary/20 via-secondary/20 to-card pb-20 flex-shrink-0">
-        <div className="px-5 pt-6 pb-4 z-10 relative">
+      <div className="relative bg-gradient-to-br from-primary/20 via-secondary/20 to-card flex-shrink-0" style={{ isolation: 'isolate' }}>
+        <div className="px-5 pt-6 pb-6 relative" style={{ zIndex: 9999 }}>
           <div className="flex items-center justify-between mb-6">
             <h1 className="text-2xl font-bold">Profile</h1>
             <button 
               type="button"
-              onClick={() => navigate('/settings')}
-              className="px-4 py-2 bg-background/80 backdrop-blur-sm rounded-full border border-border/50 font-medium text-sm active:scale-95 animate-fast shadow-sm pointer-events-auto cursor-pointer z-20 min-w-[96px] h-10 items-center justify-center hidden sm:flex"
-              style={{ touchAction: 'manipulation' }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigate('/settings');
+              }}
+              onTouchStart={(e) => {
+                e.stopPropagation();
+              }}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                navigate('/settings');
+              }}
+              className="px-4 py-2 bg-background/80 backdrop-blur-sm rounded-full border border-border/50 font-medium text-sm shadow-sm cursor-pointer flex items-center justify-center gap-2"
+              style={{ 
+                touchAction: 'manipulation',
+                WebkitTapHighlightColor: 'rgba(0,0,0,0.1)',
+                userSelect: 'none',
+                WebkitUserSelect: 'none',
+                position: 'relative',
+                zIndex: 9999,
+                minWidth: '96px',
+                height: '40px',
+                isolation: 'isolate'
+              }}
             >
-              <Edit size={16} className="inline mr-2" />
-              Edit
+              <Edit size={16} />
+              <span>Edit</span>
             </button>
           </div>
-        </div>
-        
-        {/* Profile Image - Overlapping */}
-        <div className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 pointer-events-none">
-          <div className="relative">
-            <img
-              src={userProfile.image}
-              alt={userProfile.name}
-              className="w-32 h-32 rounded-3xl object-cover ring-4 ring-background shadow-float"
-              loading="lazy"
-              onError={(e) => {
-                const target = e.currentTarget as HTMLImageElement;
-                target.onerror = null;
-                target.src = "/placeholder.svg";
-              }}
-            />
-            <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold shadow-brand">
-              ✓
+          
+          {/* Profile Image - Non-overlapping */}
+          <div className="flex justify-center mt-4">
+            <div className="relative">
+              <img
+                src={userProfile.image}
+                alt={userProfile.name}
+                className="w-32 h-32 rounded-3xl object-cover ring-4 ring-background shadow-float"
+                loading="lazy"
+                onError={(e) => {
+                  const target = e.currentTarget as HTMLImageElement;
+                  target.onerror = null;
+                  target.src = "/placeholder.svg";
+                }}
+              />
+              <div className="absolute -bottom-2 -right-2 w-10 h-10 bg-primary text-primary-foreground rounded-full flex items-center justify-center font-bold shadow-brand pointer-events-none">
+                ✓
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* Profile Info - Fixed Height Scroll */}
-      <div className="flex-1 overflow-y-auto px-5 pt-20 pb-6 space-y-6">
+      <div className="flex-1 overflow-y-auto px-5 pt-6 pb-6 space-y-6">
         <div className="text-center">
-          <div className="flex items-center justify-center gap-3 mb-1 px-4">
-            <h2 className="text-2xl font-bold truncate max-w-[60%]">
+          <div className="flex items-center justify-center mb-1 px-4">
+            <h2 className="text-2xl font-bold">
               {userProfile.name}
             </h2>
-            <button 
-              type="button"
-              onClick={() => navigate('/settings')}
-              className="px-3 py-1.5 bg-secondary/20 rounded-full border border-border/50 font-medium text-sm active:scale-95 animate-fast shadow-sm pointer-events-auto cursor-pointer inline-flex items-center gap-2 sm:hidden"
-              style={{ touchAction: 'manipulation' }}
-            >
-              <Edit size={16} />
-              <span>Edit</span>
-            </button>
           </div>
           <div className="flex items-center justify-center gap-2 text-muted-foreground mb-2">
             <span className="text-lg font-semibold text-primary">{userProfile.age} years old</span>

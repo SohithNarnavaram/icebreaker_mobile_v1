@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { View, Text, SafeAreaView, ScrollView, TextInput, Pressable, Image, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, Animated } from "react-native";
+import { View, Text, SafeAreaView, ScrollView, TextInput, Pressable, Image, StyleSheet, KeyboardAvoidingView, Platform, Keyboard, Animated, BackHandler } from "react-native";
 import { Search, Send, ArrowLeft, Smile, Paperclip, Mic, MessageSquare } from "lucide-react-native";
 import { useNotifications } from "../contexts/NotificationContext";
 import { useNavigation } from "@react-navigation/native";
@@ -55,6 +55,18 @@ const ChatsScreen = () => {
   });
 
   const currentChatMessages: ChatMessage[] = selectedChat ? (chatMessages[selectedChat] ?? []) : [];
+
+  // Handle hardware back button when in a chat
+  useEffect(() => {
+    if (!selectedChat) return;
+
+    const backHandler = BackHandler.addEventListener('hardwareBackPress', () => {
+      setSelectedChat(null);
+      return true; // Prevent default behavior (navigating away from screen)
+    });
+
+    return () => backHandler.remove();
+  }, [selectedChat]);
 
   useEffect(() => {
     if (!selectedChat) return;
@@ -284,7 +296,7 @@ const ChatsScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000000' },
-  header: { paddingHorizontal: 20, paddingTop: 50, paddingBottom: 20, borderBottomWidth: 1, borderBottomColor: '#1A1A1A' },
+  header: { paddingHorizontal: 20, paddingTop: 50, paddingBottom: 18, backgroundColor: '#000000' },
   headerTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
   title: { fontSize: 32, fontWeight: '700', color: '#FFFFFF', marginBottom: 6, letterSpacing: -0.5 },
   subtitle: { fontSize: 15, color: '#9CA3AF', fontWeight: '500' },

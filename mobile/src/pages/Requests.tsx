@@ -206,7 +206,7 @@ const RequestsScreen = () => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#000000' },
-  header: { paddingHorizontal: 20, paddingTop: 46, paddingBottom: 16, borderBottomWidth: 1, borderBottomColor: '#2E2E2E' },
+  header: { paddingHorizontal: 20, paddingTop: 46, paddingBottom: 18, backgroundColor: '#000000' },
   title: { fontSize: 28, fontWeight: 'bold', color: '#E5E7EB', marginBottom: 4 },
   subtitle: { fontSize: 14, color: '#9CA3AF' },
   tabContainer: { 

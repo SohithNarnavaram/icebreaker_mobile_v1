@@ -1,18 +1,10 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { View, Text, SafeAreaView, Pressable, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Heart, Users, Calendar } from "lucide-react-native";
 
 const IndexScreen = () => {
   const navigation = useNavigation();
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      navigation.navigate('Main' as never);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, [navigation]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -41,14 +33,21 @@ const IndexScreen = () => {
 
           <Pressable
             style={styles.button}
-            onPress={() => navigation.navigate('Main' as never)}
+            onPress={() => navigation.navigate('SignUp' as never)}
           >
             <Text style={styles.buttonText}>Get Started</Text>
           </Pressable>
           
-          <Text style={styles.redirectText}>
-            Redirecting you to the app...
-          </Text>
+          <Pressable
+            style={styles.secondaryButton}
+            onPress={() => navigation.navigate('SignIn' as never)}
+          >
+            <Text style={styles.secondaryButtonText}>Sign In</Text>
+          </Pressable>
+          
+          <Pressable onPress={() => navigation.navigate('Main' as never)}>
+            <Text style={styles.skipText}>Skip for now</Text>
+          </Pressable>
         </View>
       </View>
     </SafeAreaView>
@@ -67,7 +66,9 @@ const styles = StyleSheet.create({
   featureText: { fontSize: 14, color: '#9CA3AF', flex: 1 },
   button: { width: '100%', backgroundColor: '#ff3f41', paddingVertical: 12, paddingHorizontal: 16, borderRadius: 8, marginBottom: 12 },
   buttonText: { color: 'white', textAlign: 'center', fontWeight: '600' },
-  redirectText: { fontSize: 12, color: '#6B7280', textAlign: 'center' },
+  secondaryButton: { width: '100%', backgroundColor: 'transparent', paddingVertical: 12, paddingHorizontal: 16, borderRadius: 8, borderWidth: 1, borderColor: '#2E2E2E', marginBottom: 12 },
+  secondaryButtonText: { color: '#E5E7EB', textAlign: 'center', fontWeight: '600' },
+  skipText: { fontSize: 14, color: '#7856d4', textAlign: 'center', marginTop: 8, fontWeight: '600' },
 });
 
 export default IndexScreen;

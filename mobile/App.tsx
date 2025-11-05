@@ -6,7 +6,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Compass, Users, Calendar, MessageCircle, Bell, User } from 'lucide-react-native';
 
 import { NotificationProvider } from './src/contexts/NotificationContext';
+import { UserProvider } from './src/context/UserContext';
 import IndexScreen from './src/pages/Index';
+import SignInScreen from './src/pages/SignIn';
+import SignUpScreen from './src/pages/SignUp';
 import NearbyScreen from './src/pages/Nearby';
 import AvailabilityScreen from './src/pages/Availability';
 import ChatsScreen from './src/pages/Chats';
@@ -97,19 +100,23 @@ function MainTabs() {
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <NotificationProvider>
-        <NavigationContainer>
-          <Stack.Navigator
-            screenOptions={{
-              headerShown: false,
-            }}
-          >
-            <Stack.Screen name="Index" component={IndexScreen} />
-            <Stack.Screen name="Main" component={MainTabs} />
-            <Stack.Screen name="Settings" component={SettingsScreen} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </NotificationProvider>
+      <UserProvider>
+        <NotificationProvider>
+          <NavigationContainer>
+            <Stack.Navigator
+              screenOptions={{
+                headerShown: false,
+              }}
+            >
+              <Stack.Screen name="Index" component={IndexScreen} />
+              <Stack.Screen name="SignIn" component={SignInScreen} />
+              <Stack.Screen name="SignUp" component={SignUpScreen} />
+              <Stack.Screen name="Main" component={MainTabs} />
+              <Stack.Screen name="Settings" component={SettingsScreen} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </NotificationProvider>
+      </UserProvider>
     </QueryClientProvider>
   );
 }

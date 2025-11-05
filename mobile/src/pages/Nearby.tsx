@@ -13,6 +13,7 @@ import {
   Modal
 } from "react-native";
 import { MapPin, Heart, MessageCircle, Map, List, Search } from "lucide-react-native";
+import AnimatedMapView from "../components/AnimatedMapView";
 
 const CustomToggle = ({ value, onValueChange }: { value: boolean; onValueChange: (val: boolean) => void }) => {
   return (
@@ -284,10 +285,7 @@ const NearbyScreen = () => {
               )}
             </View>
             <View style={styles.mapContainer}>
-              <View style={styles.mapPlaceholder}>
-                <Text style={styles.mapPlaceholderText}>Map View</Text>
-                <Text style={styles.mapPlaceholderSubtext}>Map integration coming soon</Text>
-              </View>
+              <AnimatedMapView />
             </View>
           </>
         )}
@@ -357,9 +355,8 @@ const styles = StyleSheet.create({
   header: {
     paddingHorizontal: 24,
     paddingTop: 46,
-    paddingBottom: 24,
-    borderBottomWidth: 1,
-    borderBottomColor: '#2E2E2E',
+    paddingBottom: 20,
+    backgroundColor: '#000000',
   },
   headerContent: {
     flexDirection: 'row',
@@ -532,9 +529,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 12,
     paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingVertical: 8,
     backgroundColor: '#0F0F10',
-    borderRadius: 12,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: '#2E2E2E',
     marginBottom: 16,
@@ -546,7 +543,7 @@ const styles = StyleSheet.create({
   },
   searchBarContainer: {
     position: 'relative',
-    marginBottom: 16,
+    marginBottom: 8,
     zIndex: 1000,
   },
   suggestionsContainer: {
@@ -555,7 +552,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: '#0F0F10',
-    borderRadius: 12,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: '#2E2E2E',
     marginTop: 8,
@@ -664,13 +661,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   interestTag: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: '#3D0A0A',
-    borderRadius: 20,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    backgroundColor: 'rgba(255, 63, 65, 0.1)',
+    borderRadius: 12,
   },
   interestText: {
-    fontSize: 13,
+    fontSize: 12,
     color: '#ff3f41',
     fontWeight: '600',
   },

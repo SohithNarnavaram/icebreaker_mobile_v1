@@ -2,9 +2,11 @@ import React, { useState, useRef } from "react";
 import { View, Text, SafeAreaView, ScrollView, Image, Pressable, StyleSheet, Modal, Animated } from "react-native";
 import { Edit, Instagram, Linkedin, MapPin, Star, Calendar, LogOut, Heart, CheckCircle, Clock, Users, ArrowRight, X } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
+import { useUser } from '../context/UserContext';
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
+  const { userProfile } = useUser();
   const [showActivityModal, setShowActivityModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'all' | 'interested' | 'scheduled' | 'requested' | 'accepted' | 'past'>('all');
   const scrollY = useRef(new Animated.Value(0)).current;
@@ -47,18 +49,6 @@ const ProfileScreen = () => {
     outputRange: [0, 156],
     extrapolate: 'clamp',
   });
-
-  const userProfile = {
-    name: "Aditi Sharma",
-    age: 25,
-    gender: "Female",
-    locality: "HSR Layout, Bangalore",
-    interests: ["Books", "Coffee", "Startup", "Travel", "Photography"],
-    preferences: ["Tech", "Books", "Female", "Male"],
-    trustScore: 4.7,
-    totalRatings: 23,
-    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400&h=400&fit=crop&crop=faces",
-  };
 
   const upcomingMeetups = [
     { id: 1, name: "Sarah Chen", time: "Today, 4:00 PM", location: "Thirdwave Coffee", type: "Proximity" },
@@ -126,7 +116,12 @@ const ProfileScreen = () => {
               }),
             }
           ]}>Profile</Animated.Text>
-          <Pressable style={styles.editButton} onPress={() => navigation.navigate('Settings' as never)}>
+          <Pressable 
+            style={[styles.editButton, { zIndex: 9999, elevation: 9999 }]} 
+            onPress={() => navigation.navigate('Settings' as never)}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            pressRetentionOffset={{ top: 20, bottom: 20, left: 20, right: 20 }}
+          >
             <Edit size={16} color="#7856d4" />
             <Text style={styles.editButtonText}>Edit</Text>
           </Pressable>
@@ -154,7 +149,7 @@ const ProfileScreen = () => {
         </View>
         
         {/* Header profile image when scrolled */}
-        <Animated.View style={[styles.headerProfileImage, { opacity: headerOpacity }]}>
+        <Animated.View style={[styles.headerProfileImage, { opacity: headerOpacity }]} pointerEvents="none">
           <Animated.Image 
             source={{ uri: userProfile.image }} 
             style={[
@@ -170,7 +165,7 @@ const ProfileScreen = () => {
         </Animated.View>
         
         {/* Header profile details when scrolled - Name, Age, Gender (Main/Middle) */}
-        <Animated.View style={[styles.headerProfileDetails, { opacity: headerOpacity }]}>
+        <Animated.View style={[styles.headerProfileDetails, { opacity: headerOpacity }]} pointerEvents="none">
           <Animated.Text 
             style={[
               styles.headerProfileName,
@@ -209,7 +204,7 @@ const ProfileScreen = () => {
         </Animated.View>
 
         {/* Header footer - Location and Rating (Bottom of Banner) */}
-        <Animated.View style={[styles.headerProfileFooter, { opacity: headerOpacity }]}>
+        <Animated.View style={[styles.headerProfileFooter, { opacity: headerOpacity }]} pointerEvents="none">
           <Animated.View 
             style={[
               styles.headerLocationRow,
@@ -387,7 +382,13 @@ const ProfileScreen = () => {
           <Pressable style={styles.actionButton}>
             <Text style={styles.actionButtonText}>Verification Status</Text>
           </Pressable>
-          <Pressable style={styles.signOutButton} onPress={() => {}}>
+          <Pressable style={styles.signOutButton} onPress={() => {
+            // Navigate to SignIn and reset the navigation stack
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'SignIn' as never }],
+            });
+          }}>
             <LogOut size={16} color="#dc2626" />
             <Text style={styles.signOutText}>Sign Out</Text>
           </Pressable>
@@ -454,13 +455,13 @@ const ProfileScreen = () => {
                            <Users size={16} color={activity.category === 'past' ? '#6b7280' : '#fff'} />}
                         </View>
                         <View style={styles.activityCardDetails}>
-                          <Text style={styles.activityCardTitle}>{activity.title || activity.name}</Text>
-                          <Text style={styles.activityCardTime}>{activity.time || activity.date}</Text>
+                          <Text style={styles.activityCardTitle}>{(activity as any).title || (activity as any).name}</Text>
+                          <Text style={styles.activityCardTime}>{(activity as any).time || (activity as any).date}</Text>
                           <Text style={styles.activityCardLocation}>{activity.location}</Text>
-                          {activity.rating && (
+                          {(activity as any).rating && (
                             <View style={styles.activityRating}>
                               <Star size={12} color="#fbbf24" fill="#fbbf24" />
-                              <Text style={styles.activityRatingText}>{activity.rating}/5</Text>
+                              <Text style={styles.activityRatingText}>{(activity as any).rating}/5</Text>
                             </View>
                           )}
                         </View>
@@ -496,7 +497,8 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
     minHeight: 150,
     position: 'relative',
-    zIndex: 1,
+    zIndex: 10000,
+    elevation: 10000,
   },
   headerTitle: { 
     fontSize: 24, 
@@ -506,27 +508,27 @@ const styles = StyleSheet.create({
   headerProfileImage: {
     position: 'absolute',
     left: 20,
-    top: 36,
+    top: 38,
     zIndex: 2,
     alignItems: 'center',
     justifyContent: 'center',
   },
   headerProfileImageSmall: {
-    width: 128,
-    height: 128,
-    borderRadius: 28,
+    width: 124,
+    height: 124,
+    borderRadius: 26,
     borderWidth: 4,
     borderColor: '#000000',
   },
   headerVerifiedBadge: {
     position: 'absolute',
-    bottom: -8,
-    right: -8,
-    width: 44,
-    height: 44,
+    bottom: -6,
+    right: -6,
+    width: 40,
+    height: 40,
     backgroundColor: '#ff3f41',
-    borderRadius: 22,
-    borderWidth: 4,
+    borderRadius: 20,
+    borderWidth: 3,
     borderColor: '#000000',
     alignItems: 'center',
     justifyContent: 'center',
@@ -534,22 +536,23 @@ const styles = StyleSheet.create({
   headerVerifiedText: { 
     color: '#fff', 
     fontWeight: 'bold', 
-    fontSize: 20 
+    fontSize: 18 
   },
   headerProfileDetails: {
     position: 'absolute',
-    left: 150,
-    top: 38,
+    left: 160,
+    top: 50,
     zIndex: 2,
     flex: 1,
-    paddingRight: 80,
+    paddingRight: 100,
     right: 16,
+    justifyContent: 'center',
   },
   headerProfileName: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#FFFFFF',
-    marginBottom: 6,
+    marginBottom: 4,
     letterSpacing: -0.3,
     lineHeight: 24,
   },
@@ -558,6 +561,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 6,
     flexWrap: 'wrap',
+    marginTop: 4,
   },
   headerAgeText: {
     fontSize: 14,
@@ -579,17 +583,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 20,
     right: 20,
-    bottom: 16,
+    bottom: 18,
     zIndex: 2,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 4,
+    paddingHorizontal: 0,
   },
   headerLocationRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 5,
     flexWrap: 'wrap',
     flex: 1,
   },
@@ -603,7 +607,7 @@ const styles = StyleSheet.create({
   headerRatingRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 5,
     flexWrap: 'wrap',
   },
   headerRatingText: {
@@ -620,13 +624,16 @@ const styles = StyleSheet.create({
   editButton: { 
     flexDirection: 'row', 
     alignItems: 'center', 
-    gap: 8, 
-    paddingHorizontal: 16, 
-    paddingVertical: 8, 
+    gap: 6, 
+    paddingHorizontal: 14, 
+    paddingVertical: 7, 
     backgroundColor: 'rgba(0, 0, 0, 0.8)', 
-    borderRadius: 24, 
+    borderRadius: 20, 
     borderWidth: 1, 
-    borderColor: 'rgba(46, 46, 46, 0.5)' 
+    borderColor: 'rgba(46, 46, 46, 0.5)',
+    position: 'relative',
+    zIndex: 10001,
+    elevation: 10001,
   },
   editButtonText: { fontSize: 14, fontWeight: '600', color: '#7856d4' },
   profileImageContainer: { 

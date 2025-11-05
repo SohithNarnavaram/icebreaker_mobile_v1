@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { Input } from "@/components/ui/input";
 import { MapPin, Heart, MessageCircle, Map, List, Search } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import MapView from "@/components/MapView";
+import AnimatedMapView from "@/components/AnimatedMapView";
 
 const Nearby = () => {
   const [connectMode, setConnectMode] = useState(false);
@@ -159,7 +159,7 @@ const Nearby = () => {
 
         {/* Location Search - Only show in Map view */}
         {viewMode === 'map' && (
-          <div className="relative">
+          <div className="relative mb-2">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={18} />
             <Input
               placeholder="Search location..."
@@ -167,12 +167,13 @@ const Nearby = () => {
               onChange={(e) => handleLocationSearchChange(e.target.value)}
               onFocus={() => setShowLocationSuggestions(true)}
               onBlur={() => setTimeout(() => setShowLocationSuggestions(false), 200)}
-              className="pl-10 bg-card border-border"
+              className="pl-10 bg-card border-border h-9 py-1.5"
+              style={{ borderRadius: '10px' }}
             />
             
             {/* Location Suggestions Dropdown */}
             {showLocationSuggestions && filteredLocations.length > 0 && (
-              <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+              <div className="absolute top-full left-0 right-0 mt-1 bg-card border border-border shadow-lg z-50 max-h-60 overflow-y-auto" style={{ borderRadius: '10px' }}>
                 {filteredLocations.slice(0, 8).map((location, index) => (
                   <button
                     key={index}
@@ -224,7 +225,7 @@ const Nearby = () => {
 
         {/* Content */}
         {connectMode && viewMode === 'map' && (
-          <MapView users={nearbyUsers} />
+          <AnimatedMapView />
         )}
 
         {/* User Cards */}
