@@ -1,11 +1,12 @@
 import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Compass, Users, Calendar, MessageCircle, Bell, User } from 'lucide-react-native';
 
-import { NotificationProvider } from './src/contexts/NotificationContext';
+import { NotificationProvider, useNotifications } from './src/contexts/NotificationContext';
 import { UserProvider } from './src/context/UserContext';
 import IndexScreen from './src/pages/Index';
 import SignInScreen from './src/pages/SignIn';
@@ -22,7 +23,43 @@ const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 const queryClient = new QueryClient();
 
+// Custom Tab Bar Icon with Badge
+const TabBarIconWithBadge = ({ 
+  IconComponent, 
+  color, 
+  size, 
+  badgeCount, 
+  showDotOnly 
+}: { 
+  IconComponent: any; 
+  color: string; 
+  size: number; 
+  badgeCount?: number; 
+  showDotOnly?: boolean;
+}) => {
+  const hasBadge = badgeCount !== undefined && badgeCount > 0;
+
+  return (
+    <View style={styles.iconContainer}>
+      <IconComponent color={color} size={size} />
+      {hasBadge && (
+        <>
+          {showDotOnly ? (
+            <View style={styles.dotBadge} />
+          ) : (
+            <View style={styles.countBadge}>
+              <Text style={styles.badgeText}>{badgeCount > 9 ? '9+' : badgeCount}</Text>
+            </View>
+          )}
+        </>
+      )}
+    </View>
+  );
+};
+
 function MainTabs() {
+  const { unreadConversations, pendingRequests } = useNotifications();
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -44,7 +81,7 @@ function MainTabs() {
         component={DiscoverScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Compass color={color} size={size} />
+            <TabBarIconWithBadge IconComponent={Compass} color={color} size={size} />
           ),
         }}
       />
@@ -53,7 +90,7 @@ function MainTabs() {
         component={NearbyScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Users color={color} size={size} />
+            <TabBarIconWithBadge IconComponent={Users} color={color} size={size} />
           ),
         }}
       />
@@ -62,7 +99,7 @@ function MainTabs() {
         component={AvailabilityScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Calendar color={color} size={size} />
+            <TabBarIconWithBadge IconComponent={Calendar} color={color} size={size} />
           ),
         }}
       />
@@ -71,7 +108,12 @@ function MainTabs() {
         component={ChatsScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <MessageCircle color={color} size={size} />
+            <TabBarIconWithBadge 
+              IconComponent={MessageCircle} 
+              color={color} 
+              size={size}
+              badgeCount={unreadConversations}
+            />
           ),
         }}
       />
@@ -80,7 +122,13 @@ function MainTabs() {
         component={RequestsScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <Bell color={color} size={size} />
+            <TabBarIconWithBadge 
+              IconComponent={Bell} 
+              color={color} 
+              size={size}
+              badgeCount={pendingRequests}
+              showDotOnly={true}
+            />
           ),
         }}
       />
@@ -89,7 +137,7 @@ function MainTabs() {
         component={ProfileScreen}
         options={{
           tabBarIcon: ({ color, size }) => (
-            <User color={color} size={size} />
+            <TabBarIconWithBadge IconComponent={User} color={color} size={size} />
           ),
         }}
       />
@@ -120,3 +168,44 @@ export default function App() {
     </QueryClientProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  iconContainer: {
+    position: 'relative',
+    width: 28,
+    height: 28,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  dotBadge: {
+    position: 'absolute',
+    top: -2,
+    right: -2,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: '#ff3f41',
+    borderWidth: 1.5,
+    borderColor: '#0D0D0D',
+  },
+  countBadge: {
+    position: 'absolute',
+    top: -4,
+    right: -6,
+    minWidth: 18,
+    height: 18,
+    paddingHorizontal: 4,
+    borderRadius: 9,
+    backgroundColor: '#ff3f41',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1.5,
+    borderColor: '#0D0D0D',
+  },
+  badgeText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: 'bold',
+    lineHeight: 12,
+  },
+});

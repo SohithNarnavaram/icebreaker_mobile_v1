@@ -26,7 +26,8 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
 
   // Mock data - in a real app, this would come from APIs
   useEffect(() => {
-    // Chat data
+    // Chat data - initial unread count for app load
+    // This gets updated dynamically by ChatsScreen when chats are opened
     const chatList = [
       {
         id: 1,
@@ -53,17 +54,16 @@ export const NotificationProvider = ({ children }: { children: React.ReactNode }
 
     const availabilityRequests = [
       { id: 1, name: "Kavya Reddy" },
-      { id: 2, name: "Arjun Singh" },
     ];
 
     // Calculate counts
-    const unreadChats = chatList.filter(chat => chat.unread > 0).length;
+    const totalUnreadMessages = chatList.reduce((sum, chat) => sum + chat.unread, 0);
     const totalRequests = proximityRequests.length + availabilityRequests.length;
     
     // Profile notifications (example: verification pending, settings updates, etc.)
-    const profilePendingItems = 1; // Example: verification status pending
+    const profilePendingItems = 0; // Example: verification status pending
 
-    setUnreadConversations(unreadChats);
+    setUnreadConversations(totalUnreadMessages);
     setPendingRequests(totalRequests);
     setProfileNotifications(profilePendingItems);
   }, []);

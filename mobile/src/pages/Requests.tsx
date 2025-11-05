@@ -1,11 +1,14 @@
-import React, { useState } from "react";
-import { View, Text, SafeAreaView, ScrollView, Image, Pressable, StyleSheet } from "react-native";
+import React, { useState, useRef, useEffect } from "react";
+import { View, Text, SafeAreaView, ScrollView, Image, Pressable, StyleSheet, Animated } from "react-native";
 import { Clock, MapPin, Check, X, Bell, Calendar } from "lucide-react-native";
 import { useNotifications } from "../contexts/NotificationContext";
 
 const RequestsScreen = () => {
   const { updatePendingRequests } = useNotifications();
   const [activeTab, setActiveTab] = useState<"proximity" | "availability">("proximity");
+  const slideAnimation = useRef(new Animated.Value(0)).current;
+  const scaleAnimation = useRef(new Animated.Value(1)).current;
+  const [tabWidth, setTabWidth] = useState(164);
   
   const [proximityRequests, setProximityRequests] = useState([
     {
@@ -40,6 +43,31 @@ const RequestsScreen = () => {
     },
   ]);
 
+  useEffect(() => {
+    // Parallel animations for smooth transition
+    Animated.parallel([
+      Animated.spring(slideAnimation, {
+        toValue: activeTab === "proximity" ? 0 : 1,
+        useNativeDriver: true,
+        tension: 80,
+        friction: 10,
+      }),
+      Animated.sequence([
+        Animated.timing(scaleAnimation, {
+          toValue: 0.97,
+          duration: 80,
+          useNativeDriver: true,
+        }),
+        Animated.spring(scaleAnimation, {
+          toValue: 1,
+          tension: 120,
+          friction: 8,
+          useNativeDriver: true,
+        })
+      ])
+    ]).start();
+  }, [activeTab]);
+
   const handleProximityResponse = (requestId: number, accepted: boolean, userName: string) => {
     setProximityRequests(prev => prev.filter(req => req.id !== requestId));
     updatePendingRequests(proximityRequests.length - 1 + availabilityRequests.length);
@@ -59,22 +87,71 @@ const RequestsScreen = () => {
         <Text style={styles.subtitle}>Manage connections</Text>
       </View>
 
-      <View style={styles.tabContainer}>
+      <View 
+        style={styles.tabContainer}
+        onLayout={(event) => {
+          const { width } = event.nativeEvent.layout;
+          // Calculate tab width: (container width - padding) / 2
+          const calculatedTabWidth = (width - 8) / 2;
+          setTabWidth(calculatedTabWidth);
+        }}
+      >
+        <Animated.View 
+          style={[
+            styles.tabSlider,
+            {
+              width: tabWidth,
+              transform: [
+                {
+                  translateX: slideAnimation.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, tabWidth],
+                  })
+                },
+                {
+                  scale: scaleAnimation
+                }
+              ]
+            }
+          ]}
+        />
         <Pressable
-          style={[styles.tab, activeTab === "proximity" && styles.tabActive]}
+          style={styles.tab}
           onPress={() => setActiveTab("proximity")}
         >
-          <Text style={[styles.tabText, activeTab === "proximity" && styles.tabTextActive]}>
+          <Animated.Text 
+            style={[
+              styles.tabText,
+              {
+                color: slideAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ['#E5E7EB', '#9CA3AF'],
+                }),
+                fontWeight: activeTab === "proximity" ? '600' : '600',
+              }
+            ]}
+          >
             Nearby ({proximityRequests.length})
-          </Text>
+          </Animated.Text>
         </Pressable>
         <Pressable
-          style={[styles.tab, activeTab === "availability" && styles.tabActive]}
+          style={styles.tab}
           onPress={() => setActiveTab("availability")}
         >
-          <Text style={[styles.tabText, activeTab === "availability" && styles.tabTextActive]}>
+          <Animated.Text 
+            style={[
+              styles.tabText,
+              {
+                color: slideAnimation.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ['#9CA3AF', '#E5E7EB'],
+                }),
+                fontWeight: activeTab === "availability" ? '600' : '600',
+              }
+            ]}
+          >
             Scheduled ({availabilityRequests.length})
-          </Text>
+          </Animated.Text>
         </Pressable>
       </View>
 
@@ -217,18 +294,37 @@ const styles = StyleSheet.create({
     backgroundColor: '#1A1A1A', 
     borderRadius: 20, 
     padding: 4,
+    position: 'relative',
   },
-  tab: { flex: 1, paddingVertical: 8, paddingHorizontal: 12, borderRadius: 16 },
-  tabActive: { 
-    backgroundColor: '#000000', 
-    shadowColor: '#000', 
-    shadowOffset: { width: 0, height: 1 }, 
-    shadowOpacity: 0.3, 
-    shadowRadius: 2, 
-    elevation: 2 
+  tabSlider: {
+    position: 'absolute',
+    left: 4,
+    top: 4,
+    bottom: 4,
+    backgroundColor: '#000000',
+    borderRadius: 16,
+    borderWidth: 0.5,
+    borderColor: '#333333',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3,
+    elevation: 3,
   },
-  tabText: { fontSize: 14, fontWeight: '600', color: '#9CA3AF', textAlign: 'center' },
-  tabTextActive: { color: '#E5E7EB', fontWeight: '600' },
+  tab: { 
+    flex: 1, 
+    paddingVertical: 8, 
+    paddingHorizontal: 12, 
+    borderRadius: 16,
+    zIndex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  tabText: { 
+    fontSize: 14, 
+    fontWeight: '600', 
+    textAlign: 'center',
+  },
   content: { flex: 1, paddingHorizontal: 16, paddingBottom: 24 },
   emptyState: { alignItems: 'center', justifyContent: 'center', paddingVertical: 48 },
   emptyIcon: { 

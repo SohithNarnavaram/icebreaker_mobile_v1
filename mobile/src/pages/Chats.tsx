@@ -12,7 +12,7 @@ const ChatsScreen = () => {
   const { updateUnreadConversations, pendingRequests } = useNotifications();
   const navigation = useNavigation();
 
-  const chatList = [
+  const [chatList, setChatList] = useState([
     {
       id: 1,
       name: "Sarah Chen",
@@ -40,7 +40,7 @@ const ChatsScreen = () => {
       unread: 1,
       image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&h=100&fit=crop&crop=face",
     },
-  ];
+  ]);
 
   type ChatMessage = { id: number; text: string; sent: boolean; time: string };
   const [chatMessages, setChatMessages] = useState<Record<number, ChatMessage[]>>({
@@ -55,6 +55,35 @@ const ChatsScreen = () => {
   });
 
   const currentChatMessages: ChatMessage[] = selectedChat ? (chatMessages[selectedChat] ?? []) : [];
+
+  // Function to mark chat as read and update badge count
+  const handleChatOpen = (chatId: number) => {
+    // Mark the chat as read (set unread to 0)
+    setChatList(prevList => 
+      prevList.map(chat => 
+        chat.id === chatId ? { ...chat, unread: 0 } : chat
+      )
+    );
+
+    // Calculate new total unread count
+    const newTotalUnread = chatList.reduce((sum, chat) => {
+      // If this is the chat being opened, don't count it
+      if (chat.id === chatId) return sum;
+      return sum + chat.unread;
+    }, 0);
+
+    // Update the notification badge
+    updateUnreadConversations(newTotalUnread);
+
+    // Set the selected chat
+    setSelectedChat(chatId);
+  };
+
+  // Initialize and sync badge count with chat list
+  useEffect(() => {
+    const totalUnread = chatList.reduce((sum, chat) => sum + chat.unread, 0);
+    updateUnreadConversations(totalUnread);
+  }, [chatList]);
 
   // Handle hardware back button when in a chat
   useEffect(() => {
@@ -257,7 +286,7 @@ const ChatsScreen = () => {
         {chatList.map((chat) => (
           <Pressable 
             key={chat.id} 
-            onPress={() => setSelectedChat(chat.id)} 
+            onPress={() => handleChatOpen(chat.id)} 
             style={({ pressed }) => [
               styles.chatItem,
               pressed && styles.chatItemPressed
